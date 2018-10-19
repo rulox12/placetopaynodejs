@@ -11,17 +11,66 @@ employeeCtrl.placetopay = async (req, res, next) => {
     });
 };
 employeeCtrl.getEmployees = async (req, res, next) => {
+    var fecha = new Date();
+    console.log(fecha);
+    const crypto = require('crypto');
+    const base64 = require('base-64');
+    var nonce = makeid();
+    var noncebase64 = base64.encode(nonce);
+    var secretkey="024h1IlD";
+    const trankey = crypto.createHash('sha1').update(nonce+fecha+secretkey).digest('base64');
+    console.log(nonce);
+    console.log(noncebase64);
     var request = require('request');
-    var json1 = {"auth":{"login":"6dd490faf9cb87a9862245da41170ff2","seed":"2018-10-19T03:38:46+00:00","nonce":"OGFhN2VlMTk2Mjk4ZjA1M2NjN2RjOWE3YTE4MDU0ZTY=","tranKey":"UEye0xxHYsS\/wJ0krwbonZrJoR8="},"buyer":{"name":"John","surname":"Doe","email":"john.doe@example.com","address":{"city":"Bogot\u00e1","street":"Calle 14 # 13b - 03"}},"payment":{"reference":"587548758","description":"Testing payment","amount":{"currency":"COP","total":10000}},"expiration":"2018-10-21T03:38:46+00:00","returnUrl":"http:\/\/example.com\/response?reference=","ipAddress":"127.0.0.1","userAgent":"Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/52.0.2743.116 Safari\/537.36"}
-     request.post('https://test.placetopay.com/redirection/api/session', {"auth":{"login":"6dd490faf9cb87a9862245da41170ff2","seed":"2018-10-19T03:38:46+00:00","nonce":"OGFhN2VlMTk2Mjk4ZjA1M2NjN2RjOWE3YTE4MDU0ZTY=","tranKey":"UEye0xxHYsS\/wJ0krwbonZrJoR8="},"buyer":{"name":"John","surname":"Doe","email":"john.doe@example.com","address":{"city":"Bogot\u00e1","street":"Calle 14 # 13b - 03"}},"payment":{"reference":"587548758","description":"Testing payment","amount":{"currency":"COP","total":10000}},"expiration":"2018-10-21T03:38:46+00:00","returnUrl":"http:\/\/example.com\/response?reference=","ipAddress":"127.0.0.1","userAgent":"Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/52.0.2743.116 Safari\/537.36"}
-    , function (err, res1, body) {
-
-     res.json(res1);
-     console.log(body);
-   })
-
+    var json1 = {  
+        "auth":{  
+           "login":"6dd490faf9cb87a9862245da41170ff2",
+           "seed":fecha,    
+           "nonce":noncebase64,
+           "tranKey":trankey
+        },
+        "buyer":{  
+           "name":"John",
+           "surname":"Doe",
+           "email":"john.doe@example.com",
+           "address":{  
+              "city":"Bogot\u00e1",
+              "street":"Calle 14 # 13b - 03"
+           }
+        },
+        "payment":{  
+           "reference":"587548758",
+           "description":"Testing payment",
+           "amount":{  
+              "currency":"COP",
+              "total":10000
+           }
+        },
+        "expiration":"2018-10-21T15:20:05+00:00",
+        "returnUrl":"http:\/\/example.com\/response?reference=",
+        "ipAddress":"127.0.0.1",
+        "userAgent":"Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/52.0.2743.116 Safari\/537.36"
+     }
+    
+     request.post({url:'https://test.placetopay.com/redirection/api/session', form: json1},
+      function(err,httpResponse,body)
+        { 
+            var jsonrespuesta=httpResponse.body;
+            res.json();
+            console.log(body);
+        })
 
     }
+    function makeid() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      
+        for (var i = 0; i < 32; i++)
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+      
+        return text;
+      }
+      
 employeeCtrl.createEmployee = async (req, res, next) => {
     const employee = new Employee({
         name: req.body.name,
