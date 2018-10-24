@@ -11,12 +11,16 @@
   "license": "ISC",
   "dependencies": {
     "Buffer": "0.0.0",
+    "axios": "^0.18.0",
     "base-64": "^0.1.0",
+    "client-oauth2": "^4.2.1",
     "cors": "^2.8.4",
     "crypto": "^1.0.1",
     "express": "^4.16.3",
     "fs": "0.0.1-security",
+    "jsforce": "^1.9.1",
     "mongoose": "^5.1.2",
+    "node-salesforce": "^0.8.0",
     "randombytes": "^2.0.6",
     "request": "^2.81.0",
     "sha1": "^1.1.1"

@@ -2,16 +2,66 @@ const Employee = require('../models/employee');
 
 const employeeCtrl = {};
 
-employeeCtrl.placetopay = async (req, res, next) => {
-    var request = require('request');
-    request('http://www.google.com', function (error, response, body) {
-      console.log('error:', error); // Print the error if one occurred
-      console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-      console.log('body:', body); // Print the HTML for the Google homepage.
+employeeCtrl.placetopay = (req, res, next) => {
+    var ClientOAuth2 = require('client-oauth2');
+    const axios= require('axios');
+    var sf = require('node-salesforce');
+    var express = require ('express'); 
+    var app = express (); 
+    // OAuth2 client information can be shared with multiple connections.
+    //
+    /*var oauth2 = new sf.OAuth2({
+    clientId : '3MVG9PerJEe9i8iJajYnbsQpGoNgrqca5ODreLGwLopqYHIyEtQSBaApE9Ou.T4GK4dP0EUhEr7CPBV4uztvj',
+    clientSecret : '6258796024106708386',
+    redirectUri : 'https://getpostman.com/oauth2/callback'
+    });
+
+    app.get('/oauth2/auth', function(req, res) {
+        res.redirect(oauth2.getAuthorizationUrl({ scope : 'api id web' }));
+    });
+    app.get('/oauth2/callback', function(req, res) {
+        var conn = new sf.Connection({ oauth2 : oauth2 });
+        var code = req.param('code');
+        conn.authorize(code, function(err, userInfo) {
+          if (err) { return console.error(err); }
+          // Now you can get the access token, refresh token, and instance URL information.
+          // Save them to establish connection next time.
+          console.log(conn.accessToken);
+          console.log(conn.refreshToken);
+          console.log(conn.instanceUrl);
+          console.log("User ID: " + userInfo.id);
+          console.log("Org ID: " + userInfo.organizationId);
+          // ...
+        });
+      });
+    */
+   var sf = require('node-salesforce');
+    var conn = new sf.Connection({
+    oauth2 : {
+        // you can change loginUrl to connect to sandbox or prerelease env.
+        // loginUrl : 'https://test.salesforce.com',
+        clientId : '3MVG9PerJEe9i8iJajYnbsQpGoNgrqca5ODreLGwLopqYHIyEtQSBaApE9Ou.T4GK4dP0EUhEr7CPBV4uztvj',
+        clientSecret : '6258796024106708386',
+        redirectUri : 'https://getpostman.com/oauth2/callback'
+    }
+    });
+    conn.login(username, password, function(err, userInfo) {
+    if (err) { return console.error(err); }
+    // Now you can get the access token and instance URL information.
+    // Save them to establish connection next time.
+    console.log(conn.accessToken);
+    console.log(conn.instanceUrl);
+    // logged in user property
+    console.log("User ID: " + userInfo.id);
+    console.log("Org ID: " + userInfo.organizationId);
+    // ...
     });
 };
+
+
 employeeCtrl.getEmployees = async (req, res, next) => {
     var fecha = new Date();
+    fecha = fecha.toISOString();
     console.log(fecha);
     const crypto = require('crypto');
     const base64 = require('base-64');
@@ -57,7 +107,8 @@ employeeCtrl.getEmployees = async (req, res, next) => {
         { 
             var jsonrespuesta=httpResponse.body;
             res.json();
-            console.log(body);
+            console.log(jsonrespuesta);
+            console.log(fecha);
         })
 
     }
