@@ -13,7 +13,7 @@ const oauth2 = new sf.OAuth2({
     redirectUri : 'http://localhost:3000/token'
 });
 
-router.get('/', employee.getEmployees);
+router.post('/', employee.getEmployees);
 router.get('/placetopay', employee.placetopay);
 router.post('/', employee.createEmployee);
 router.get('/:id', employee.getEmployee);

@@ -60,17 +60,19 @@ employeeCtrl.placetopay = (req, res, next) => {
 
 
 employeeCtrl.getEmployees = async (req, res, next) => {
+
     var fecha = new Date();
     fecha = fecha.toISOString();
-    console.log(fecha);
+    var val = req.body.valor;
+    console.log(val);
     const crypto = require('crypto');
     const base64 = require('base-64');
     var nonce = makeid();
     var noncebase64 = base64.encode(nonce);
     var secretkey="024h1IlD";
     const trankey = crypto.createHash('sha1').update(nonce+fecha+secretkey).digest('base64');
-    console.log(nonce);
-    console.log(noncebase64);
+    
+    var exp = new Date();
     var request = require('request');
     var json1 = {  
         "auth":{  
@@ -84,7 +86,7 @@ employeeCtrl.getEmployees = async (req, res, next) => {
            "surname":"Doe",
            "email":"john.doe@example.com",
            "address":{  
-              "city":"Bogot\u00e1",
+              "city":"Bogota",
               "street":"Calle 14 # 13b - 03"
            }
         },
@@ -93,25 +95,25 @@ employeeCtrl.getEmployees = async (req, res, next) => {
            "description":"Testing payment",
            "amount":{  
               "currency":"COP",
-              "total":10000
+              "total": val
            }
         },
-        "expiration":"2018-10-21T15:20:05+00:00",
+        "expiration":new Date(exp.getTime() + (30 * 60 * 1000)),
         "returnUrl":"http:\/\/example.com\/response?reference=",
         "ipAddress":"127.0.0.1",
         "userAgent":"Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/52.0.2743.116 Safari\/537.36"
      }
-    
+     return new Promise(function (resolve, reject) {
      request.post({url:'https://test.placetopay.com/redirection/api/session', form: json1},
       function(err,httpResponse,body)
         { 
             var jsonrespuesta=httpResponse.body;
-            res.json();
-            console.log(jsonrespuesta);
-            console.log(fecha);
+            res.json(body);
+            resolve();
         })
+    });
 
-    }
+}
     function makeid() {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
