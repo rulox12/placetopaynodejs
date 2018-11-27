@@ -99,7 +99,7 @@ employeeCtrl.getEmployees = async (req, res, next) => {
            }
         },
         "expiration":new Date(exp.getTime() + (30 * 60 * 1000)),
-        "returnUrl":"http:\/\/example.com\/response?reference=",
+        "returnUrl":"http://localhost:4200/#/respuesta/587548758",
         "ipAddress":"127.0.0.1",
         "userAgent":"Mozilla\/5.0 (X11; Linux x86_64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/52.0.2743.116 Safari\/537.36"
      }
@@ -123,6 +123,38 @@ employeeCtrl.getEmployees = async (req, res, next) => {
       
         return text;
       }
+
+updateStatus = async (req, res, next) => {
+var fecha = new Date();
+fecha = fecha.toISOString();
+const crypto = require('crypto');
+const base64 = require('base-64');
+var nonce = makeid();
+var noncebase64 = base64.encode(nonce);
+var secretkey = "klKJYNJ5dQr7XJjJ";
+const trankey = crypto.createHash('sha1').update(nonce + fecha + secretkey).digest('base64');
+var request = require('request');
+var json1 = {
+    "auth": {
+        "login": "9bd885a2f0a6f4bb6aac98fdc178baf8",
+        "seed": fecha,
+        "nonce": noncebase64,
+        "tranKey": trankey
+    }
+}
+request.post({ url: 'https://test.placetopay.com/redirection/api/session/157067' , form: json1 },
+    function (err, httpResponse, body) {  
+        if (err) {
+            res.json(err);
+            console.log("error");
+        }
+        resolve();
+        var jsonrespuesta = JSON.parse(httpResponse.body);
+        console.log(httpResponse.body);
+        res.json({processURL: jsonrespuesta.processUrl});
+
+    });
+}
       
 employeeCtrl.createEmployee = async (req, res, next) => {
     const employee = new Employee({
